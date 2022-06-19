@@ -10,6 +10,7 @@ const cors = require("cors");
 
 // Start up an instance of app
 const app = express();
+app.use(cors());
 
 /* Middleware*/
 //Here we are configuring express to use body-parser as middle-ware.
@@ -28,12 +29,9 @@ const server = app.listen(port, () => {
 // POST route
 app.post("/add", addInfo);
 function addInfo(req, res) {
-  newData = {
-    temp: req.body.temp,
-    date: req.body.date,
-    content: req.body.content,
-  };
-  projectData.push(newData);
+  projectData["temp"] = req.body.temp;
+  projectData["date"] = req.body.date;
+  projectData["content"] = req.body.content;
 
   res.json(projectData);
 }

@@ -8,7 +8,7 @@ const apiKey = "72132fbf3b18daf64ff9e03dc31d71e7";
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
+let newDate = d.getMonth() + 1 + "." + d.getDate() + "." + d.getFullYear();
 
 // Adding Event listener  to the DOM element
 document.getElementById("generate").addEventListener("click", (e) => {
@@ -16,29 +16,36 @@ document.getElementById("generate").addEventListener("click", (e) => {
   //getting user Data
   const zipCode = document.getElementById("zip").value;
   const content = document.getElementById("feelings").value;
-
-  //calling weatherData function
-  weatherData(WAppUrl, zipCode, apiKey)
-    .then((newUserData) => {
-      // add data to POST request
-      postData("/add", { date: newDate, temp: newUserData.main.temp, content });
-    })
-    .then(
-      (updateUI = async () => {
-        // call updateUI to update browser content
-        const request = await fetch("/all");
-        try {
-          const newData = await request.json();
-
-          // update new user entry values
-          document.getElementById("date").innerHTML = newData.date;
-          document.getElementById("temp").innerHTML = newData.temp;
-          document.getElementById("content").innerHTML = newData.content;
-        } catch (e) {
-          console.error("error", e);
-        }
+  if (zipCode == "") {
+    alert("The zip code is invalid. Try again");
+  } else {
+    //calling weatherData function
+    weatherData(WAppUrl, zipCode, apiKey)
+      .then((newUserData) => {
+        // add data to POST request
+        postData("/add", {
+          date: newDate,
+          temp: newUserData.main.temp,
+          content,
+        });
       })
-    );
+      .then(
+        (updateUI = async () => {
+          // call updateUI to update browser content
+          const request = await fetch("/all");
+          try {
+            const newData = await request.json();
+
+            // update new user entry values
+            document.getElementById("date").innerHTML = newData.date;
+            document.getElementById("temp").innerHTML = newData.temp;
+            document.getElementById("content").innerHTML = newData.content;
+          } catch (e) {
+            console.error("error", e);
+          }
+        })
+      );
+  }
 });
 
 /* Function to GET Web API information*/
